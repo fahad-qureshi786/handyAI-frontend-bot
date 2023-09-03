@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 // Import Tailwind CSS classes for the delete icon
 import 'tailwindcss/tailwind.css';
@@ -8,10 +8,10 @@ export default function Home() {
     const [inputText, setInputText] = useState('');
     const [isChatCleared, setChatCleared] = useState(false); // State to control chat clearing
     const messagesEndRef = useRef(null);
-
+    const textareaRef = useRef(null);
     useEffect(() => {
         // Scroll to the bottom of the chat messages when they change
-        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
     }, [messages]);
 
     const handleSendMessage = () => {
@@ -21,7 +21,7 @@ export default function Home() {
         setChatCleared(false);
 
         // Create a new user message and add it to the chat
-        const userMessage = { text: inputText, sender: 'user' };
+        const userMessage = {text: inputText, sender: 'user'};
         setMessages([...messages, userMessage]);
         setInputText('');
 
@@ -49,6 +49,23 @@ export default function Home() {
         setMessages([]); // Clear the messages array
         setChatCleared(true); // Set the chat clearing state to true
     };
+    const handleInputChange = (e) => {
+        setInputText(e.target.value);
+        adjustTextareaHeight();
+    };
+
+    // Function to adjust the textarea height based on its content
+    const adjustTextareaHeight = () => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = 'auto'; // Reset height to auto
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set height to scrollHeight
+        }
+    };
+
+    useEffect(() => {
+        // Adjust the textarea height initially
+        adjustTextareaHeight();
+    }, []);
 
     return (
         <div className="flex flex-col h-screen">
@@ -100,19 +117,20 @@ export default function Home() {
                         </div>
                     ))
                 )}
-                <div ref={messagesEndRef} />
+                <div ref={messagesEndRef}/>
             </div>
             <div className="border-t-2 border-gray-200 mb-4 px-4 pt-4 sm:pt-2">
                 <div className="relative flex">
-                    <textarea
-                        rows="1" // Start with a single row
-                        placeholder="Write your message!"
-                        className="flex items-stretch flex-grow focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
-                        value={inputText}
-                        onChange={(e) => setInputText(e.target.value)}
-                        onKeyPress={handleKeyPress} // Listen for Enter key press
-                    />
-                    <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
+                            <textarea
+                                ref={textareaRef}
+                                rows="1" // Start with a single row
+                                placeholder="Write your message!"
+                                className="flex-grow resize-none pe-16 focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
+                                value={inputText}
+                                onChange={handleInputChange}
+                                onKeyPress={handleKeyPress}
+                            />
+                    <div className="absolute bottom-0 right-0 pb-1 pe-1">
                         <button
                             type="button"
                             className={`inline-flex items-center justify-center rounded-lg px-4 py-2 transition duration-500 ease-in-out text-white ${
