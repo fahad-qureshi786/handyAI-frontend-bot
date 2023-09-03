@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // Import Tailwind CSS classes for the delete icon
 import 'tailwindcss/tailwind.css';
@@ -9,9 +9,10 @@ export default function Home() {
     const [isChatCleared, setChatCleared] = useState(false); // State to control chat clearing
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
+
     useEffect(() => {
         // Scroll to the bottom of the chat messages when they change
-        messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
     const handleSendMessage = () => {
@@ -21,34 +22,32 @@ export default function Home() {
         setChatCleared(false);
 
         // Create a new user message and add it to the chat
-        const userMessage = {text: inputText, sender: 'user'};
+        const userMessage = { text: inputText, sender: 'user' };
         setMessages([...messages, userMessage]);
         setInputText('');
 
         // Simulate a bot response (you can replace this with your own logic)
         setTimeout(() => {
             const botResponse = {
-                text:
-                    "Hi welcome! How can I help you? Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?Hi welcome! How can I help you?",
+                text: 'Hi welcome! How can I help you?',
                 sender: 'bot',
             };
             setMessages([...messages, userMessage, botResponse]);
-        }, 1000);
+
+            // Reset the textarea height after a slight delay
+            adjustTextareaHeight();
+        }, 10);
     };
 
     const isSendButtonDisabled = inputText.trim() === '';
 
     const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
             handleSendMessage();
         }
     };
 
-    // Function to clear the chat messages
-    const handleClearChat = () => {
-        setMessages([]); // Clear the messages array
-        setChatCleared(true); // Set the chat clearing state to true
-    };
     const handleInputChange = (e) => {
         setInputText(e.target.value);
         adjustTextareaHeight();
@@ -67,12 +66,17 @@ export default function Home() {
         adjustTextareaHeight();
     }, []);
 
+    const handleClearChat = () => {
+        setMessages([]); // Clear the messages array
+        setChatCleared(true); // Set the chat clearing state to true
+    };
+
     return (
-        <div className="flex flex-col h-screen">
-            <div className="absolute top-4 right-4">
+        <div className="flex flex-col h-screen relative">
+            <div className="fixed top-4 right-4 z-10">
                 {/* Delete button to clear the chat */}
                 <button
-                    className="text-red-600  hover:text-red-800 transition duration-300"
+                    className="text-red-600 hover:text-red-800 transition duration-300"
                     onClick={handleClearChat}
                 >
                     <svg
@@ -108,8 +112,6 @@ export default function Home() {
                                     message.sender === 'user'
                                         ? 'bg-blue-600 text-white w-full md:max-w-[52rem]'
                                         : 'bg-gray-300 text-gray-600'
-                                } ${
-                                    message.sender === 'bot' ? 'w-full md:w-[52rem] ' : '' // Adjust the width for bot responses
                                 }`}
                             >
                                 {message.text}
@@ -117,19 +119,19 @@ export default function Home() {
                         </div>
                     ))
                 )}
-                <div ref={messagesEndRef}/>
+                <div ref={messagesEndRef} />
             </div>
-            <div className="border-t-2 border-gray-200 mb-4 px-4 pt-4 sm:pt-2">
+            <div className="border-t-2 border-gray-200 mb-4 px-4 pt-4 sm:pt-2 relative">
                 <div className="relative flex">
-                            <textarea
-                                ref={textareaRef}
-                                rows="1" // Start with a single row
-                                placeholder="Write your message!"
-                                className="flex-grow resize-none pe-16 focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
-                                value={inputText}
-                                onChange={handleInputChange}
-                                onKeyPress={handleKeyPress}
-                            />
+                    <textarea
+                        ref={textareaRef}
+                        rows="1" // Start with a single row
+                        placeholder="Write your message!"
+                        className="flex-grow resize-none pe-16 focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
+                        value={inputText}
+                        onChange={handleInputChange}
+                        onKeyPress={handleKeyPress}
+                    />
                     <div className="absolute bottom-0 right-0 pb-1 pe-1">
                         <button
                             type="button"
