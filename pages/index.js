@@ -4,6 +4,8 @@ import {useState, useEffect, useRef} from 'react';
 import 'tailwindcss/tailwind.css';
 import axios from "axios";
 import Head from "next/head";
+import Image from 'next/image';
+import Loader from "../components/Loader";
 
 export default function Home() {
     const [messages, setMessages] = useState([]);
@@ -166,10 +168,7 @@ export default function Home() {
                                 disabled={isSendButtonDisabled}
                             >
                                 {isLoading ? (
-                                    <svg className="animate-spin h-5 w-5 ml-2 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-100" cx="12" cy="12" r="10" stroke="#0000FF" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="#0000FF" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.86 3.168 8.022l2-2.732zm12 2.732A7.962 7.962 0 0120 12h4c0 6.627-5.373 12-12 12v-4zm-2-5.291l2-2.732A7.962 7.962 0 0120 12h-4c0-3.042-1.135-5.86-3.168-8.022z"></path>
-                                    </svg>
+                                   <Loader/>
 
                                 ) : (
                                     <>

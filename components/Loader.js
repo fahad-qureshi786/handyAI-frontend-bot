@@ -14,8 +14,10 @@ const LottieLoader = () => {
     };
 
     return (
-
+        <div className={"w-14 h-7 object-fill"}>
             <Lottie options={defaultOptions} />
+        </div>
+
     );
 };
 
