@@ -3,6 +3,7 @@ import {useState, useEffect, useRef} from 'react';
 // Import Tailwind CSS classes for the delete icon
 import 'tailwindcss/tailwind.css';
 import axios from "axios";
+import Head from "next/head";
 
 export default function Home() {
     const [messages, setMessages] = useState([]);
@@ -86,60 +87,64 @@ export default function Home() {
 
 
     return (
-        <div className="flex flex-col h-screen relative">
-            <div className="fixed top-2 right-2 z-10">
-                {/* Delete button to clear the chat */}
-                <button
-                    className="text-red-600 hover:text-red-800 transition duration-300"
-                    onClick={handleClearChat}
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        className="h-6 w-6"
+        <>
+            <Head>
+                <title> Dice Food App</title>
+            </Head>
+            <div className="flex flex-col h-screen relative">
+                <div className="fixed top-2 right-2 z-10">
+                    {/* Delete button to clear the chat */}
+                    <button
+                        className="text-red-600 hover:text-red-800 transition duration-300"
+                        onClick={handleClearChat}
                     >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M6 18L18 6M6 6l12 12"
-                        />
-                    </svg>
-                </button>
-            </div>
-            <div
-                style={{maxHeight: 'calc(100vh - 50px)', overflowY: 'auto'}}
-                id="messages"
-                className="flex-1 mt-8 bg p-2 sm:p-6 text-lg justify-start flex flex-col space-y-4 scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
-            >
-                {isChatCleared ? null : (
-                    messages.map((message, index) => (
-                        <div
-                            key={index}
-                            className={`chat-message ${
-                                message.sender === 'user' ? 'self-end' : 'self-start'
-                            }`}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            className="h-6 w-6"
                         >
-                            {message.sender === 'bot' ? (
-                                <div
-                                    dangerouslySetInnerHTML={{__html: message.text}}
-                                    className={`px-4 py-2 rounded-lg inline-block bg-gray-200 text-gray-900 md:max-w-[52rem]`}
-                                />
-                            ) : (
-                                <span
-                                    className={`px-4 py-2 rounded-lg inline-block bg-blue-600 text-white my-4 w-full md:max-w-[52rem]`}>
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button>
+                </div>
+                <div
+                    style={{maxHeight: 'calc(100vh - 50px)', overflowY: 'auto'}}
+                    id="messages"
+                    className="flex-1 mt-8 bg p-2 sm:p-6 text-lg justify-start flex flex-col space-y-4 scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
+                >
+                    {isChatCleared ? null : (
+                        messages.map((message, index) => (
+                            <div
+                                key={index}
+                                className={`chat-message ${
+                                    message.sender === 'user' ? 'self-end' : 'self-start'
+                                }`}
+                            >
+                                {message.sender === 'bot' ? (
+                                    <div
+                                        dangerouslySetInnerHTML={{__html: message.text}}
+                                        className={`px-4 py-2 rounded-lg inline-block bg-gray-200 text-gray-900 md:max-w-[52rem]`}
+                                    />
+                                ) : (
+                                    <span
+                                        className={`px-4 py-2 rounded-lg inline-block bg-blue-600 text-white my-4 w-full md:max-w-[52rem]`}>
                                     {message.text}
                                 </span>
-                            )}
-                        </div>
-                    ))
-                )}
-                <div ref={messagesEndRef}/>
-            </div>
-            <div className="border-t-2 fixed border-gray-200 mb-4 px-4 pt-4 sm:pt-2 relative">
-                <div className="relative shadow-inner drop-shadow-sm  shadow-lg  flex my-4">
+                                )}
+                            </div>
+                        ))
+                    )}
+                    <div ref={messagesEndRef}/>
+                </div>
+                <div className="border-t-2 fixed border-gray-200 mb-4 px-4 pt-4 sm:pt-2 relative">
+                    <div className="relative shadow-inner drop-shadow-sm  shadow-lg  flex my-4">
                     <textarea
                         ref={textareaRef}
                         rows="1" // Start with a single row
@@ -149,44 +154,45 @@ export default function Home() {
                         onChange={handleInputChange}
                         onKeyPress={handleKeyPress}
                     />
-                    <div className="absolute bottom-0 right-0  pb-2.5 pe-3">
-                        <button
-                            type="button"
-                            className={`inline-flex items-center justify-center rounded-lg px-4 py-2 transition duration-500 ease-in-out text-white ${
-                                isSendButtonDisabled
-                                    ? 'bg-gray-300 cursor-not-allowed'
-                                    : 'bg-blue-500 hover:bg-blue-400'
-                            } focus:outline-none`}
-                            onClick={handleSendMessage}
-                            disabled={isSendButtonDisabled}
-                        >
-                            {isLoading ? (
-                                <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg"
-                                     fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-100" cx="12" cy="12" r="10" stroke="blue"
-                                            strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor"
-                                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.86 3.168 8.022l2-2.732zm12 2.732A7.962 7.962 0 0120 12h4c0 6.627-5.373 12-12 12v-4zm-2-5.291l2-2.732A7.962 7.962 0 0120 12h-4c0-3.042-1.135-5.86-3.168-8.022z"></path>
-                                </svg>
-
-                            ) : (
-                                <>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                        className="h-6 w-6 ml-2 transform rotate-90"
-                                    >
-                                        <path
-                                            d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"
-                                        />
+                        <div className="absolute bottom-0 right-0  pb-2.5 pe-3">
+                            <button
+                                type="button"
+                                className={`inline-flex items-center justify-center rounded-lg px-4 py-2 transition duration-500 ease-in-out text-white ${
+                                    isSendButtonDisabled
+                                        ? 'bg-gray-300 cursor-not-allowed'
+                                        : 'bg-blue-500 hover:bg-blue-400'
+                                } focus:outline-none`}
+                                onClick={handleSendMessage}
+                                disabled={isSendButtonDisabled}
+                            >
+                                {isLoading ? (
+                                    <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg"
+                                         fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-100" cx="12" cy="12" r="10" stroke="blue"
+                                                strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor"
+                                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.86 3.168 8.022l2-2.732zm12 2.732A7.962 7.962 0 0120 12h4c0 6.627-5.373 12-12 12v-4zm-2-5.291l2-2.732A7.962 7.962 0 0120 12h-4c0-3.042-1.135-5.86-3.168-8.022z"></path>
                                     </svg>
-                                </>
-                            )}
-                        </button>
+
+                                ) : (
+                                    <>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                            className="h-6 w-6 ml-2 transform rotate-90"
+                                        >
+                                            <path
+                                                d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"
+                                            />
+                                        </svg>
+                                    </>
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
