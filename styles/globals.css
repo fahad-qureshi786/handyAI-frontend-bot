@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.loading-button {
+    @apply cursor-wait;
+    /* Add styles to indicate loading, e.g., changing background color or adding a spinner */
+}
