@@ -1,5 +1,8 @@
 {
-  "name": "fastech-nextjs-template",
+  "name": "dice-app",
+  "description": "Cuisines deals generation",
+  "author": "ctofastech",
+  "keywords": ["dice", "Dice"],
   "version": "0.1.0",
   "private": true,
   "scripts": {
