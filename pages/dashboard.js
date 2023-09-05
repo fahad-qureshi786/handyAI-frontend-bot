@@ -1,18 +1,42 @@
-import React, {useState} from 'react';
-import { UploadOutlined } from '@ant-design/icons';
-import { Button, message, Upload } from 'antd';
+import React, {useEffect, useState} from 'react';
+import { Button } from "@material-tailwind/react";
+import { useRouter } from 'next/router'
+import axios from "axios";
+import { List, ListItem, Card } from "@material-tailwind/react";
+
+
 const Dashboard = () => {
     const [isDragOver, setIsDragOver] = useState(false);
-    const [uploadedFileName, setUploadedFileName] = useState('');
+    const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [csvFiles, setCsvFiles] = useState([]);
+    const router = useRouter();
+    const handleFileUpload = async (e) => {
+        const files = Array.from(e.target.files);
 
-    const handleFileUpload = (e) => {
-        const file = e.target.files[0];
-        if (file && file.type === 'text/csv') {
-            // Handle the file upload logic here
-            setUploadedFileName(file.name);
-            console.log('Selected file:', file.name);
+        const validCSVFiles = files.filter((file) => file.type === 'text/csv');
+
+        if (validCSVFiles.length > 0) {
+            const formData = new FormData();
+
+            validCSVFiles.forEach((file) => {
+                formData.append('file', file); // Append each file to the FormData object
+            });
+
+            try {
+                const response = await axios.post("http://localhost:5000/upload-csv", formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data', // Set the content type to multipart/form-data
+                    },
+                });
+
+                // Handle the response as needed
+                fetchData();
+                console.log("Upload successful", response);
+            } catch (error) {
+                console.error("Upload failed", error);
+            }
         } else {
-            alert('Please select a valid CSV file.');
+            alert('Please select one or more valid CSV files.');
         }
     };
 
@@ -30,69 +54,72 @@ const Dashboard = () => {
         e.preventDefault();
         setIsDragOver(false);
 
-        const file = e.dataTransfer.files[0];
-        if (file && file.type === 'text/csv') {
+        const files = Array.from(e.dataTransfer.files);
+
+        const validCSVFiles = files.filter((file) => file.type === 'text/csv');
+
+        if (validCSVFiles.length > 0) {
             // Handle the file upload logic here
-            setUploadedFileName(file.name);
-            console.log('Dropped file:', file.name);
+            const fileNames = validCSVFiles.map((file) => file.name);
+            setUploadedFiles([...uploadedFiles, ...fileNames]);
+            console.log('Dropped files:', fileNames);
         } else {
-            alert('Please drop a valid CSV file.');
+            alert('Please drop one or more valid CSV files.');
         }
     };
+    function handleClick(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+        router.push("/");
+    }
+    const fetchData = async () => {
+        axios.get("http://localhost:5000/get-all-csv").then(response =>{
+            setCsvFiles(response.data.csv_files);
+            console.log(response.data.csv_files);
+        })
+    }
+   useEffect(() => {
+        fetchData();
+    }, []);
     return (
         <>
             <>
                 {/* component */}
                 <section className="text-gray-600 body-font">
-                    <div className="container px-5 py-24 mx-auto">
-                        <div className="flex flex-wrap w-full mb-8">
-                            <div className="w-full mb-6 lg:mb-0">
-                                <h1 className="sm:text-4xl text-5xl font-medium title-font mb-2 text-gray-900">
-                                    Statistic
-                                </h1>
-                                <div className="h-1 w-20 bg-indigo-500 rounded" />
-                            </div>
-                        </div>
-                        <div className="flex flex-wrap -m-4 text-center">
-                            <div className="p-4 sm:w-1/4 w-1/2">
-                                <div className="bg-indigo-500 rounded-lg p-2 xl:p-6">
-                                    <h2 className="title-font font-medium sm:text-4xl text-3xl text-white">
-                                        2.7K
-                                    </h2>
-                                    <p className="leading-relaxed text-gray-100 font-bold">Total Uploaded Files</p>
-                                </div>
-                            </div>
-                            <div className="p-4 sm:w-1/4 w-1/2">
-                                <div className="bg-indigo-500 rounded-lg p-2 xl:p-6">
-                                    <h2 className="title-font font-medium sm:text-4xl text-3xl text-white">
-                                        1.8K
-                                    </h2>
-                                    <p className="leading-relaxed text-gray-100 font-bold">
-                                        Total available Food
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="p-4 sm:w-1/4 w-1/2">
-                                <div className="bg-indigo-500 rounded-lg p-2 xl:p-6">
-                                    <h2 className="title-font font-medium sm:text-4xl text-3xl text-white">
-                                        35K
-                                    </h2>
-                                    <p className="leading-relaxed text-gray-100 font-bold">Total visited persons </p>
-                                </div>
-                            </div>
-                            <div className="p-4 sm:w-1/4 w-1/2">
-                                <div className="bg-indigo-500 rounded-lg p-2 xl:p-6">
-                                    <h2 className="title-font font-medium sm:text-4xl text-3xl text-white">
-                                        24K
-                                    </h2>
-                                    <p className="leading-relaxed text-gray-100 font-bold">Completed Orders</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div className="fixed top-2 right-2 z-10">
+                        <Button className="flex items-center text-black mt-2 me-2 bg-amber-400 gap-3" onClick={handleClick}>
+                            Back to Chat
+                            <svg
+                                className={"w-6 h-6"}
+                                version="1.1"
+                                id="icons_1_"
+                                xmlns="http://www.w3.org/2000/svg"
+                                x={0}
+                                y={0}
+                                viewBox="0 0 128 128"
+                                style={{ enableBackground: "new 0 0 128 128" }}
+                                xmlSpace="preserve"
+                            >
+                                <style
+                                    dangerouslySetInnerHTML={{
+                                        __html: ".st0{display:none}.st1{display:inline}.st2{fill:#0a0a0a}"
+                                    }}
+                                />
+                                <g id="row1_1_">
+                                    <g id="_x31__3_">
+                                        <path
+                                            className="st2"
+                                            d="M64 0C28.7 0 0 28.7 0 64s28.7 64 64 64 64-28.7 64-64S99.3 0 64 0zm0 121.6C32.2 121.6 6.4 95.8 6.4 64S32.2 6.4 64 6.4s57.6 25.8 57.6 57.6-25.8 57.6-57.6 57.6zM49.2 38.4 73.6 64 49.2 89.6h13.5L86.4 64 62.7 38.4H49.2z"
+                                            id="_x32__2_"
+                                        />
+                                    </g>
+                                </g>
+                            </svg>
+                        </Button>
                     </div>
                 </section>
-                <section className={"flex justify-center"}>
+                <section className="flex mt-28 justify-center">
                     <div
+                        style={{"box-shadow": "rgba(0, 0, 0, 0.24) 0px 3px 8px"}}
                         className={`w-full md:w-1/2 h-56 flex justify-center flex-col items-center mx-auto bg-white p-6 rounded-lg shadow-md ${
                             isDragOver ? 'border-4 border-blue-400' : ''
                         }`}
@@ -102,7 +129,7 @@ const Dashboard = () => {
                         onDrop={handleDrop}
                     >
                         <h2 className="text-xl font-semibold mb-4">CSV File Uploader</h2>
-                        {uploadedFileName && (
+                        {uploadedFiles.length > 0 && (
                             <div className="text-green-600 mb-4">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +145,9 @@ const Dashboard = () => {
                                         d="M5 13l4 4L19 7"
                                     />
                                 </svg>
-                                {uploadedFileName} uploaded successfully
+                                {uploadedFiles.length === 1
+                                    ? `${uploadedFiles[0]} uploaded successfully`
+                                    : `${uploadedFiles.length} files uploaded successfully`}
                             </div>
                         )}
                         <form>
@@ -130,6 +159,7 @@ const Dashboard = () => {
                                     accept=".csv"
                                     onChange={handleFileUpload}
                                     className="mt-2 hidden"
+                                    multiple // Allow multiple file selection
                                 />
                                 <label
                                     htmlFor="csvFile"
@@ -137,14 +167,37 @@ const Dashboard = () => {
                                         isDragOver ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-600'
                                     } py-2 px-4 rounded-lg`}
                                 >
-                                    {uploadedFileName ? 'Change File' : isDragOver ? 'Drop CSV File Here' : 'Click or Drag a CSV File Here'}
+                                    {uploadedFiles.length > 0
+                                        ? 'Add More Files'
+                                        : isDragOver
+                                            ? 'Drop CSV Files Here'
+                                            : 'Click or Drag CSV Files Here'}
                                 </label>
                             </div>
                         </form>
                     </div>
                 </section>
             </>
-
+            <h3 className={"w-full text-center text-3xl  mt-10"}>Uploaded Files</h3>
+            <div className={"w-full mt-4 justify-center flex "}>
+                <Card className={"md:w-8/12 w-full py-10 px-6 grid grid-cols-1 md:grid-cols-2 gap-5 border-gray-600"}>
+                {
+                    csvFiles.map((itm, index)=>{
+                        return(
+                            <>
+                                <Card key={index} className=" w-full flex justify-between">
+                                    <List>
+                                        <a href="#" className="text-initial">
+                                            <ListItem>{itm}</ListItem>
+                                        </a>
+                                    </List>
+                                </Card>
+                            </>
+                        )
+                    })
+                }
+                </Card>
+            </div>
         </>
     );
 };

@@ -100,57 +100,58 @@ export default function Home() {
                 <title> Dice Food App</title>
             </Head>
             <div className="flex flex-col h-screen relative">
-                <div className="fixed top-2 right-2 z-10">
-                    {/* Delete button to clear the chat */}
-                    <button
-                        className="text-red-600 hover:text-red-800 transition duration-300"
-                        onClick={handleClearChat}
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            className="h-6 w-6"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </button>
-                </div>
-                <div className="fixed top-2 ms-2 cursor-pointer left-2 z-10">
+               <div className={"h-5"}>
+                   <div className="fixed bg top-4 md:top-2 right-2 z-10">
+                       <button
+                           className="text-red-600 hover:text-red-800 transition duration-300"
+                           onClick={handleClearChat}
+                       >
+                           <svg
+                               xmlns="http://www.w3.org/2000/svg"
+                               fill="none"
+                               viewBox="0 0 24 24"
+                               stroke="currentColor"
+                               className="h-6 w-6"
+                           >
+                               <path
+                                   strokeLinecap="round"
+                                   strokeLinejoin="round"
+                                   strokeWidth="2"
+                                   d="M6 18L18 6M6 6l12 12"
+                               />
+                           </svg>
+                       </button>
+                   </div>
+                   <div className="fixed top-2 ms-2 cursor-pointer left-2 z-10">
 
-                    <div className="relative">
-                        <div className="cursor-pointer" onClick={toggleDropdown}>
-                            <Avatar
-                                size="sm"
-                                alt="avatar"
-                                src="/admin.png"
-                                className="border border-green-500 shadow-xl shadow-green-900/20 ring-4 ring-green-500/30"
-                            />
-                        </div>
-                        {isOpen && (
-                            <div
-                                className="absolute left-1 mt-2 w-28 bg-white border border-gray-300 shadow-lg rounded-lg">
-                                <ul>
-                                    <Link href={"/login"}>
-                                        <li className="px-4 flex items-center space-x-2 justify-center py-2 hover:bg-gray-100 cursor-pointer">
-                                            <div>
-                                                Login
-                                            </div>
-                                            <AiOutlineLogin/>
-                                        </li>
-                                    </Link>
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-                </div>
+                       <div className="relative">
+                           <div className="cursor-pointer" onClick={toggleDropdown}>
+                               <Avatar
+                                   size="sm"
+                                   alt="avatar"
+                                   src="/admin.png"
+                                   className="border border-green-500 shadow-xl shadow-green-900/20 ring-4 ring-green-500/30"
+                               />
+                           </div>
+                           {isOpen && (
+                               <div
+                                   className="absolute left-1 mt-2 w-28 bg-white border border-gray-300 shadow-lg rounded-lg">
+                                   <ul>
+                                       <Link href={"/login"}>
+                                           <li className="px-4 flex items-center space-x-2 justify-center py-2 hover:bg-gray-100 cursor-pointer">
+                                               <div>
+                                                   Login
+                                               </div>
+                                               <AiOutlineLogin/>
+                                           </li>
+                                       </Link>
+                                   </ul>
+                               </div>
+                           )}
+                       </div>
+                   </div>
 
+               </div>
                 <div
                     style={{maxHeight: 'calc(100vh - 50px)', overflowY: 'auto'}}
                     id="messages"
