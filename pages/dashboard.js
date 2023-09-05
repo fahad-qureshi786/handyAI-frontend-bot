@@ -3,6 +3,7 @@ import { Button } from "@material-tailwind/react";
 import { useRouter } from 'next/router'
 import axios from "axios";
 import { List, ListItem, Card } from "@material-tailwind/react";
+import {APIs} from "../const/APIs";
 
 
 const Dashboard = () => {
@@ -23,7 +24,7 @@ const Dashboard = () => {
             });
 
             try {
-                const response = await axios.post("http://localhost:5000/upload-csv", formData, {
+                const response = await axios.post(APIs.UPLOAD_CSV, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data', // Set the content type to multipart/form-data
                     },
@@ -72,9 +73,8 @@ const Dashboard = () => {
         router.push("/");
     }
     const fetchData = async () => {
-        axios.get("http://localhost:5000/get-all-csv").then(response =>{
+        axios.get(APIs.GET_ALL_CSV).then(response =>{
             setCsvFiles(response.data.csv_files);
-            console.log(response.data.csv_files);
         })
     }
    useEffect(() => {

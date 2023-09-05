@@ -7,6 +7,7 @@ import Loader from "../components/Loader";
 import {Avatar} from "@material-tailwind/react";
 import Link from "next/link";
 import {AiOutlineLogin} from "react-icons/ai";
+import {APIs} from "../const/APIs";
 
 export default function Home() {
     const [messages, setMessages] = useState([]);
@@ -40,7 +41,7 @@ export default function Home() {
         setInputText({prompt: ''}); // Clear the input text
         setIsLoading(true);
         // Send the user message to the API
-        axios.post("http://localhost:5000/process-menu", inputText)
+        axios.post(APIs.PROCESS_MENU, inputText)
             .then(response => {
                 console.log(response.data);
                 // Reset the textarea height after a slight delay
