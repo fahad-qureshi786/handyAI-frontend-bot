@@ -1,11 +1,12 @@
 import {useState, useEffect, useRef} from 'react';
 
-// Import Tailwind CSS classes for the delete icon
 import 'tailwindcss/tailwind.css';
 import axios from "axios";
 import Head from "next/head";
-import Image from 'next/image';
 import Loader from "../components/Loader";
+import {Avatar} from "@material-tailwind/react";
+import Link from "next/link";
+import {AiOutlineLogin} from "react-icons/ai";
 
 export default function Home() {
     const [messages, setMessages] = useState([]);
@@ -16,6 +17,7 @@ export default function Home() {
     const [isChatCleared, setChatCleared] = useState(false);
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
+    const [isOpen, setIsOpen] = useState(false);
 
 
     useEffect(() => {
@@ -87,6 +89,10 @@ export default function Home() {
         setChatCleared(true); // Set the chat clearing state to true
     };
 
+    const toggleDropdown = () => {
+        setIsOpen(!isOpen);
+    };
+
 
     return (
         <>
@@ -116,6 +122,35 @@ export default function Home() {
                         </svg>
                     </button>
                 </div>
+                <div className="fixed top-2 ms-2 cursor-pointer left-2 z-10">
+
+                    <div className="relative">
+                        <div className="cursor-pointer" onClick={toggleDropdown}>
+                            <Avatar
+                                size="sm"
+                                alt="avatar"
+                                src="/admin.png"
+                                className="border border-green-500 shadow-xl shadow-green-900/20 ring-4 ring-green-500/30"
+                            />
+                        </div>
+                        {isOpen && (
+                            <div
+                                className="absolute left-1 mt-2 w-28 bg-white border border-gray-300 shadow-lg rounded-lg">
+                                <ul>
+                                    <Link href={"/login"}>
+                                        <li className="px-4 flex items-center space-x-2 justify-center py-2 hover:bg-gray-100 cursor-pointer">
+                                            <div>
+                                                Login
+                                            </div>
+                                            <AiOutlineLogin/>
+                                        </li>
+                                    </Link>
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 <div
                     style={{maxHeight: 'calc(100vh - 50px)', overflowY: 'auto'}}
                     id="messages"
@@ -168,7 +203,7 @@ export default function Home() {
                                 disabled={isSendButtonDisabled}
                             >
                                 {isLoading ? (
-                                   <Loader/>
+                                    <Loader/>
 
                                 ) : (
                                     <>
