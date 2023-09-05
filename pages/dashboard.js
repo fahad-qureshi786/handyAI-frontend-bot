@@ -4,13 +4,15 @@ import { useRouter } from 'next/router'
 import axios from "axios";
 import { List, ListItem, Card } from "@material-tailwind/react";
 import {APIs} from "../const/APIs";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Dashboard = () => {
     const [isDragOver, setIsDragOver] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [csvFiles, setCsvFiles] = useState([]);
     const router = useRouter();
+
     const handleFileUpload = async (e) => {
         const files = Array.from(e.target.files);
 
@@ -32,12 +34,18 @@ const Dashboard = () => {
 
                 // Handle the response as needed
                 fetchData();
-                console.log("Upload successful", response);
+                toast.success('Upload Successfully', {
+                    position: toast.POSITION.BOTTOM_CENTER
+                });
             } catch (error) {
-                console.error("Upload failed", error);
+                toast.error('Something went wrong', {
+                    position: toast.POSITION.BOTTOM_CENTER
+                });
             }
         } else {
-            alert('Please select one or more valid CSV files.');
+            toast.warning('Please select one or more valid CSV files.', {
+                position: toast.POSITION.TOP_RIGHT
+            });
         }
     };
 
@@ -117,6 +125,7 @@ const Dashboard = () => {
                         </Button>
                     </div>
                 </section>
+                <ToastContainer />
                 <section className="flex mt-28 justify-center">
                     <div
                         style={{"box-shadow": "rgba(0, 0, 0, 0.24) 0px 3px 8px"}}

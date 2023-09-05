@@ -2,24 +2,36 @@ import React, {useState} from 'react';
 import {useRouter} from 'next/router'
 import {AiOutlineEye, AiOutlineEyeInvisible} from "react-icons/ai";
 import {Avatar} from "@material-tailwind/react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [password, setPassword] = useState('');
+    const [userData, setUserData] = useState({
+        email: '',
+        password: '',
+    });
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
     };
 
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-    };
     const router = useRouter();
 
     function handleClick(event) {
-
-        event.preventDefault();
-        router.push("/dashboard");
+        if (userData.email==="admin@gmail.com" || userData.password==="admin") {
+            event.preventDefault();
+            router.push("/dashboard");
+            toast.success('Login Successfully !', {
+                position: toast.POSITION.TOP_RIGHT
+            });
+        }else {
+            toast.error('Please enter valid credentials!', {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            event.preventDefault();
+        }
     }
 
     return (
@@ -87,6 +99,8 @@ const Login = () => {
                                         </label>
                                         <input
                                             style={{"width": "100%"}}
+                                            value={userData.email}
+                                            onChange={(e) => setUserData({...userData, email: e.target.value})}
                                             type="text"
                                             placeholder="email"
                                             className="py-2 pl-10 pr-4 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500"
@@ -98,11 +112,11 @@ const Login = () => {
                                         </label>
                                         <div className="relative w-full">
                                             <input
+                                                value={userData.password}
+                                                onChange={(e) => setUserData({...userData, password: e.target.value})}
                                                 style={{"width": "100%"}}
                                                 type={passwordVisible ? 'text' : 'password'}
                                                 placeholder="Password"
-                                                value={password}
-                                                onChange={handlePasswordChange}
                                                 className="py-2 pl-10 pr-4 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500"
                                             />
                                             <span
@@ -153,6 +167,7 @@ const Login = () => {
                                     </div>
                                 </form>
                             </div>
+                            <ToastContainer />
                         </div>
                     </div>
                 </div>
