@@ -196,8 +196,8 @@ const Dashboard = () => {
                             <>
                                 <Card key={index} className=" w-full flex justify-between">
                                     <List>
-                                        <a href="#" className="text-initial">
-                                            <ListItem>{itm}</ListItem>
+                                        <a href={itm.url} className="text-initial">
+                                            <ListItem>{itm.filename}</ListItem>
                                         </a>
                                     </List>
                                 </Card>
