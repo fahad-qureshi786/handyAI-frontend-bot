@@ -20,6 +20,20 @@ export default function Home() {
     const textareaRef = useRef(null);
     const [isOpen, setIsOpen] = useState(false);
 
+    const createNewSession = async () => {
+        await axios.post(APIs.GENERATE_SESSION).then(res=> {
+            sessionStorage.setItem("session", JSON.stringify(res.data));
+        }).catch(err=> {
+            alert("Error session creation")
+        })
+    }
+
+
+
+
+    useEffect(() => {
+        createNewSession()
+    }, []);
 
     useEffect(() => {
         // Adjust the textarea height initially
@@ -28,7 +42,7 @@ export default function Home() {
         messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
     }, [messages]);
 
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
         // Reset the textarea height after a slight delay
         adjustTextareaHeight();
         if (inputText.prompt.trim() === '') return;
@@ -41,7 +55,7 @@ export default function Home() {
         setInputText({prompt: ''}); // Clear the input text
         setIsLoading(true);
         // Send the user message to the API
-        axios.post(APIs.PROCESS_MENU, inputText)
+        await axios.post(APIs.PROCESS_MENU+`/${JSON.parse(sessionStorage.getItem("session")).session_id}`, inputText)
             .then(response => {
                 console.log(response.data);
                 // Reset the textarea height after a slight delay
