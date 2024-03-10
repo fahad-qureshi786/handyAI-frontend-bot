@@ -24,7 +24,7 @@ export default function Home() {
         await axios.post(APIs.GENERATE_SESSION).then(res=> {
             sessionStorage.setItem("session", JSON.stringify(res.data));
         }).catch(err=> {
-            alert("Error session creation")
+            console.log("Error session creation")
         })
     }
 
@@ -112,11 +112,11 @@ export default function Home() {
     return (
         <>
             <Head>
-                <title> Dice Food App</title>
+                <title> HandyAI</title>
             </Head>
             <div className="flex flex-col h-screen relative">
-               <div className={"h-5"}>
-                   <div className="fixed bg top-4 md:top-2 right-2 z-10">
+               <div style={{backgroundColor: '#EEEEEE', height: '4rem'}} >
+                   <div style={{marginTop: '0.7rem'}} className="fixed bg top-8 md:top-2 right-2 z-10">
                        <button
                            className="text-red-600 hover:text-red-800 transition duration-300"
                            onClick={handleClearChat}
@@ -137,16 +137,13 @@ export default function Home() {
                            </svg>
                        </button>
                    </div>
+                   <div className="text-center mt-5">
+                       <h4><b>Your Personal AI Handyman, Ready to Assist</b></h4>
+                   </div>
                    <div className="fixed top-2 ms-2 cursor-pointer left-2 z-10">
-
                        <div className="relative">
                            <div className="cursor-pointer" onClick={toggleDropdown}>
-                               <Avatar
-                                   size="sm"
-                                   alt="avatar"
-                                   src="/admin.png"
-                                   className="border border-green-500 shadow-xl shadow-green-900/20 ring-4 ring-green-500/30"
-                               />
+                               <img src="/img.png" />
                            </div>
                            {isOpen && (
                                <div
