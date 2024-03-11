@@ -278,8 +278,8 @@ export default function Home() {
                                                     />
                                                 </div>
                                                 <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 px-2">
-                                                    <img onClick={} src="/ph_camera.png" alt="Capture Photo" className="mx-auto"/>
-                                                    <h6 onClick={} className="text-center">Capture Photo</h6>
+                                                    <img src="/ph_camera.png" alt="Capture Photo" className="mx-auto"/>
+                                                    <h6 className="text-center">Capture Photo</h6>
                                                     <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
                                                 </div>
                                             </div>
@@ -332,7 +332,7 @@ export default function Home() {
                         <div className="absolute bottom-1 left-2  pb-2.5 pe-3">
                             {/*right button*/}
                             <span data-modal-target="popup-modal" data-modal-toggle="popup-modal">
-                                <span onClick={() => setShowModal(true)}>
+                                <span onClick={() => setShowModal(false)}>
                                       <svg width="30" height="30" viewBox="0 0 30 30" fill="none"
                                            xmlns="http://www.w3.org/2000/svg">
                                     <path
