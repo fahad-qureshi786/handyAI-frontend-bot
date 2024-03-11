@@ -212,7 +212,7 @@ export default function Home() {
         <>
             <Head>
                 <title> HandyAI</title>
-                <link rel="icon" href="/favicon.jpeg" />
+                <link rel="icon" href="/favicon.ico" />
             </Head>
             <div className="flex flex-col h-screen relative">
                 <div style={{backgroundColor: '#EEEEEE', height: '4rem'}}>
