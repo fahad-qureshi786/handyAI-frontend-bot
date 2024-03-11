@@ -9,7 +9,7 @@ import {AiOutlineLogin} from "react-icons/ai";
 import {APIs} from "../const/APIs";
 
 export default function Home() {
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState( []);
     const [isLoading, setIsLoading] = useState(false); // New state for loading indicator
     const [inputText, setInputText] = useState({
         prompt: '',
@@ -94,11 +94,15 @@ export default function Home() {
 
 
     const createNewSession = async () => {
-        await axios.get(APIs.USERS.GENERATE_SESSION).then(res => {
-            sessionStorage.setItem("session", JSON.stringify(res.data.response));
-        }).catch(err => {
-            console.log("Error session creation")
-        })
+        if(!sessionStorage.getItem("session")){
+            await axios.get(APIs.USERS.GENERATE_SESSION).then(res => {
+                sessionStorage.setItem("session", JSON.stringify(res.data.response));
+            }).catch(err => {
+                console.log("Error session creation")
+            })
+        }else if(sessionStorage.getItem("chatHistory")){
+            setMessages(JSON.parse(sessionStorage.getItem("chatHistory")))
+        }
     }
 
 
@@ -112,7 +116,11 @@ export default function Home() {
         // Scroll to the bottom of the chat messages when they change
         messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
     }, [messages]);
-
+    useEffect(() => {
+        if(messages.length>0){
+            sessionStorage.setItem("chatHistory", JSON.stringify(messages));
+        }
+    }, [messages]);
     const handleSendMessage = async () => {
         // Reset the textarea height after a slight delay
         adjustTextareaHeight();
@@ -141,12 +149,10 @@ export default function Home() {
                     text: botResponseHtml,
                     sender: 'bot',
                 };
-                // Set the formatted bot response directly in the state
                 setMessages([...messages, userMessage, formattedBotResponse]);
                 setIsLoading(false);
             })
             .catch(error => {
-                // Handle errors here
                 console.error(error);
             });
     };
