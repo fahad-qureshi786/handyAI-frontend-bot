@@ -100,6 +100,23 @@ export default function Home() {
             }).catch(err => {
                 console.log("Error session creation")
             })
+
+            await axios.post(APIs.USERS.ASK_QUERY, {
+                sessionId: JSON.parse(sessionStorage.getItem("session")),
+                userRequest: "Please introduce to my new user as you are a handy man from theupkeepclub how can you assist them!"
+            }).then(response => {
+                    adjustTextareaHeight();
+                    const botResponseHtml = response.data.response.modelResponse;
+                    const formattedBotResponse = {
+                        text: botResponseHtml,
+                        sender: 'bot',
+                    };
+                    setMessages([...messages, "", formattedBotResponse]);
+                    setIsLoading(false);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         }else if(sessionStorage.getItem("chatHistory")){
             setMessages(JSON.parse(sessionStorage.getItem("chatHistory")))
         }
@@ -182,6 +199,7 @@ export default function Home() {
 
     const handleClearChat = () => {
         setMessages([]); // Clear the messages array
+        sessionStorage.setItem("chatHistory", JSON.stringify([])); // Clear the messages array
         setChatCleared(true); // Set the chat clearing state to true
     };
 
