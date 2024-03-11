@@ -4,7 +4,6 @@ import 'tailwindcss/tailwind.css';
 import axios from "axios";
 import Head from "next/head";
 import Loader from "../components/Loader";
-import {Avatar} from "@material-tailwind/react";
 import Link from "next/link";
 import {AiOutlineLogin} from "react-icons/ai";
 import {APIs} from "../const/APIs";
@@ -38,7 +37,7 @@ export default function Home() {
 
     const getCameraPermission = async () => {
         try {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const mediaStream = await navigator.mediaDevices.getUserMedia({video: true});
             setStream(mediaStream);
             if (videoRef.current) {
                 videoRef.current.srcObject = mediaStream;
@@ -51,7 +50,7 @@ export default function Home() {
     const capturePhoto = () => {
         if (canvasRef.current && videoRef.current) {
             const context = canvasRef.current.getContext('2d');
-            const { videoWidth, videoHeight } = videoRef.current;
+            const {videoWidth, videoHeight} = videoRef.current;
             // Set canvas size to match video
             canvasRef.current.width = videoWidth;
             canvasRef.current.height = videoHeight;
@@ -95,8 +94,8 @@ export default function Home() {
 
 
     const createNewSession = async () => {
-        await axios.post(APIs.GENERATE_SESSION).then(res => {
-            sessionStorage.setItem("session", JSON.stringify(res.data));
+        await axios.get(APIs.USERS.GENERATE_SESSION).then(res => {
+            sessionStorage.setItem("session", JSON.stringify(res.data.response));
         }).catch(err => {
             console.log("Error session creation")
         })
@@ -126,14 +125,18 @@ export default function Home() {
         setMessages([...messages, userMessage]);
         setInputText({prompt: ''}); // Clear the input text
         setIsLoading(true);
-        // Send the user message to the API
-        await axios.post(APIs.PROCESS_MENU + `/${JSON.parse(sessionStorage.getItem("session")).session_id}`, inputText)
+        // Send the user message to the AP
+        let formData = new FormData()
+        formData.append("sessionId", JSON.parse(sessionStorage.getItem("session")))
+        formData.append("userRequest", inputText.prompt)
+
+        await axios.post(APIs.USERS.ASK_QUERY, {
+            sessionId: JSON.parse(sessionStorage.getItem("session")),
+            userRequest: inputText.prompt
+        })
             .then(response => {
-                console.log(response.data);
-                // Reset the textarea height after a slight delay
                 adjustTextareaHeight();
-                // Extract the bot's response from the API response and format it
-                const botResponseHtml = response.data["waiter_response"];
+                const botResponseHtml = response.data.response.modelResponse;
                 const formattedBotResponse = {
                     text: botResponseHtml,
                     sender: 'bot',
@@ -185,32 +188,24 @@ export default function Home() {
         <>
             <Head>
                 <title> HandyAI</title>
+                <link rel="icon" href="/favicon.jpeg" />
             </Head>
             <div className="flex flex-col h-screen relative">
                 <div style={{backgroundColor: '#EEEEEE', height: '4rem'}}>
-                    <div style={{marginTop: '0.7rem'}} className="fixed bg top-8 md:top-2 right-2 z-10">
+                    <div style={{marginTop: '0.2rem'}} className="fixed bg top-8 md:top-2 right-2 z-10">
                         <button
                             className="text-red-600 hover:text-red-800 transition duration-300"
                             onClick={handleClearChat}
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                className="h-6 w-6"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M6 18L18 6M6 6l12 12"
-                                />
+                            <svg width="40" height="42" viewBox="0 0 40 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.77664 33.4618C13.1558 36.8174 16.3308 37.1875 16.3308 37.1875C18.9791 34.7034 20.4225 32.4844 22.0325 27.7314C22.0325 27.7314 15.7425 21.3255 14.4566 19.3095C14.4566 19.3095 11.5325 20.8845 9.2708 21.1015C7.56664 21.2651 4.65747 20.349 4.65747 20.349C4.6808 22.9023 6.3433 30.051 9.77664 33.4618Z" stroke="#808080" stroke-width="2.08333" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M14.4568 19.3095C16.0426 18.368 18.9426 16.1997 20.2851 17.4282C21.3375 18.3293 22.3075 19.3314 23.1826 20.4216C24.0985 21.6764 22.8343 24.864 22.0326 27.7314" stroke="#808080" stroke-width="2.08333" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M21.7126 18.767C24.5184 16.1245 35.3426 4.8125 35.3426 4.8125M5.8584 26.3427C9.38923 26.6201 11.7167 25.8072 11.7167 25.8072M9.0984 32.7136C14.2567 31.955 16.0426 29.2399 16.0426 29.2399" stroke="#808080" stroke-width="2.08333" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
                     </div>
                     <div className="text-center mt-5">
-                        <h4><b>Your Personal AI Handyman, Ready to Assist</b></h4>
+                        <h3 className={"text-lg"}><b>Your Personal AI Handyman, Ready to Assist</b></h3>
                     </div>
                     <div className="fixed top-2 ms-2 cursor-pointer left-2 z-10">
                         <div className="relative">
@@ -248,9 +243,11 @@ export default function Home() {
                                 className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
                                 <div className="relative w-auto my-6 mx-auto max-w-3xl">
                                     {/*content*/}
-                                    <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                                    <div
+                                        className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                                         {/*header*/}
-                                        <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
+                                        <div
+                                            className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
                                             <h3 className="text-3l font-semibold">
                                                 Upload/Select an Image
                                             </h3>
@@ -258,7 +255,8 @@ export default function Home() {
                                                 className="p-1 ml-auto border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
                                                 onClick={() => setShowModal(false)}
                                             >
-                                                <span className=" text-dark text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                                                <span
+                                                    className=" text-dark text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
                                                   X
                                                 </span>
                                             </button>
@@ -267,7 +265,8 @@ export default function Home() {
                                         <div className="relative p-6 flex-auto">
                                             <div className="flex flex-wrap -mx-2">
                                                 <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 px-2">
-                                                    <img onClick={handleClick} src="/flat-color-icons_gallery.png" alt="Choose Photo" className="mx-auto"/>
+                                                    <img onClick={handleClick} src="/flat-color-icons_gallery.png"
+                                                         alt="Choose Photo" className="mx-auto"/>
                                                     <h6 onClick={handleClick} className="text-center">Choose Photo</h6>
                                                     <input
                                                         type="file"
@@ -280,7 +279,7 @@ export default function Home() {
                                                 <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 px-2">
                                                     <img src="/ph_camera.png" alt="Capture Photo" className="mx-auto"/>
                                                     <h6 className="text-center">Capture Photo</h6>
-                                                    <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+                                                    <canvas ref={canvasRef} style={{display: 'none'}}></canvas>
                                                 </div>
                                             </div>
                                         </div>
@@ -301,13 +300,13 @@ export default function Home() {
                                 }`}
                             >
                                 {message.sender === 'bot' ? (
-                                    <div
+                                    <div style={{backgroundColor: '#007C7C', opacity: '70%', color: 'white'}}
                                         dangerouslySetInnerHTML={{__html: message.text}}
-                                        className={`px-4 py-2 rounded-lg inline-block bg-gray-200 text-gray-900 md:max-w-[52rem]`}
+                                        className={`px-4 py-2 rounded-lg inline-block text-gray-900 md:max-w-[52rem]`}
                                     />
                                 ) : (
-                                    <span
-                                        className={`px-4 py-2 rounded-lg inline-block bg-blue-600 text-white my-4 w-full md:max-w-[52rem]`}>
+                                    <span style={{backgroundColor: '#EEEEEE', color: 'black'}}
+                                        className={`px-4 py-2 rounded-lg inline-block my-4 w-full md:max-w-[52rem]`}>
                                     {message.text}
                                 </span>
                                 )}
