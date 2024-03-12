@@ -10,13 +10,19 @@ import {useRouter} from "next/router";
 export default function SessionChat(){
     const [sessions, setSessions] = useState([])
     const [messages, setMessages] = useState([])
+    const [loading, setLoading] = useState({
+        chat: false,
+        sessions: false
+    })
     const [errorState, setError] = useState('')
     const router = useRouter();
     const { sessionId } = router.query;
     const fetchSessions = async () => {
         await axios.get(APIs.ADMIN.GET_UNIQUE_SESSIONS).then(res=> {
             setSessions(res.data.response)
+            setLoading({...loading, sessions: true})
         }).catch(err=> {
+            setLoading({...loading, sessions: false})
             setError("Error fetching sessions" + err.message)
         })
     }
@@ -25,8 +31,10 @@ export default function SessionChat(){
             sessionId: sessionId
         }).then(res=> {
             console.log(res.data.response)
+            setLoading({...loading, chat: true})
             setMessages(res.data.response)
         }).catch(err=> {
+            setLoading({...loading, chat: false})
             setError("Error fetching sessions" + err.message)
         })
     }
