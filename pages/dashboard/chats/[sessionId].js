@@ -18,20 +18,22 @@ export default function SessionChat(){
     const router = useRouter();
     const { sessionId } = router.query;
     const fetchSessions = async () => {
+        setLoading({...loading, sessions: true})
         await axios.get(APIs.ADMIN.GET_UNIQUE_SESSIONS).then(res=> {
             setSessions(res.data.response)
-            setLoading({...loading, sessions: true})
+            setLoading({...loading, sessions: false})
         }).catch(err=> {
             setLoading({...loading, sessions: false})
             setError("Error fetching sessions" + err.message)
         })
     }
     const getSessionMessages = async () => {
+        setLoading({...loading, chat: true})
         await axios.post(APIs.ADMIN.FILTER_CONVERSATIONS_USING_SESSION_ID, {
             sessionId: sessionId
         }).then(res=> {
             console.log(res.data.response)
-            setLoading({...loading, chat: true})
+            setLoading({...loading, chat: false})
             setMessages(res.data.response)
         }).catch(err=> {
             setLoading({...loading, chat: false})
@@ -57,7 +59,7 @@ export default function SessionChat(){
                     {/*    Sessions Lists */}
                     <ol className="list-decimal h-screen overflow-auto list-inside">
                         {
-                            loading.sessions ? <>
+                            loading.sessions===true ? <>
                                 <div role="status">
                                     <svg aria-hidden="true"
                                          className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
@@ -85,7 +87,7 @@ export default function SessionChat(){
                         Chat Session: {sessionId}
                     </h2>
                     {
-                        loading.chat ? <>
+                        loading.chat===true ? <>
                             <div role="status">
                                 <svg aria-hidden="true"
                                      className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
