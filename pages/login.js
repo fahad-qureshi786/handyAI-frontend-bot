@@ -3,7 +3,6 @@ import {useRouter} from 'next/router'
 import {AiOutlineEye, AiOutlineEyeInvisible} from "react-icons/ai";
 import {Avatar} from "@material-tailwind/react";
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);

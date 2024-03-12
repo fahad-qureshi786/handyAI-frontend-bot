@@ -1,18 +1,37 @@
-export const ChatMessage = ({index, senderMessage, botReply}) => {
+export const ChatMessage = ({index, senderMessage, botReply,dateTimeStamp}) => {
+    const formatDateTime = (dateTimeStamp) => {
+        const date = new Date(dateTimeStamp);
+        if (isNaN(date.getTime())) { // Checks if the date is invalid
+            return 'Invalid Date'; // Return a placeholder or handle as needed
+        }
+
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            timeZoneName: 'short'
+        };
+
+        return new Intl.DateTimeFormat('en-US', options).format(date);
+    };
     return (
         <>
 
             <div key={index} className="chat-message self-end">
-                        <span style={{backgroundColor: '#EEEEEE', color: 'black'}}
+                        <p style={{backgroundColor: '#EEEEEE', color: 'black'}}
                               className={`px-4 py-2 rounded-lg inline-block my-4 w-full md:max-w-full`}>
                             {senderMessage}
-                        </span>
+                            <br/>
+                            <span className="text-end justify-end flex text-black">{
+                                formatDateTime(dateTimeStamp)
+                            }</span>
+                        </p>
+
             </div>
-            <div key={index} className="chat-message self-start">
-                        <span style={{backgroundColor: '#057e7e', color: 'white'}}
-                              className={`px-4 py-2 rounded-lg inline-block text-gray-900 md:max-w-full`}>
-                            {botReply}
-                        </span>
+            <div style={{backgroundColor: '#099696', color: 'white'}} dangerouslySetInnerHTML={{__html: botReply}} key={index} className="chat-message px-4 py-2 rounded self-start">
             </div>
 
         </>
