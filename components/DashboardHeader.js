@@ -1,32 +1,28 @@
-import React, {useEffect, useState} from 'react';
-import {ToastContainer, toast} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import {Fragment} from 'react'
+import {Fragment, useState} from 'react'
 import {Disclosure, Menu, Transition} from '@headlessui/react'
 import {Bars3Icon, BellIcon, XMarkIcon} from '@heroicons/react/24/outline'
+import {useRouter} from "next/router";
 
-const navigation = [
-    {name: 'System Prompt', href: '#', current: true},
-    {name: 'Users Statistics', href: '#', current: false},
-    {name: 'Chat Histories', href: '#', current: false},
-    {name: 'Settings', href: '#', current: false},
-]
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-const Dashboard = () => {
+export const DashboardHeader = ({dashboard, chats, settings}) => {
+    const [navigation, setNavigation] = useState([
+        {name: 'Dashboard', href: '/dashboard', current: dashboard},
+        {name: 'Chats', href: '/dashboard/chats', current: chats},
+        {name: 'Settings', href: '/dashboard/settings', current: settings},
+    ])
+    const router = useRouter();
 
+    function logout() {
+        sessionStorage.removeItem("login")
+        router.push("/");
+    }
 
-    useEffect(() => {
-    }, []);
     return (
         <>
-            {/* component */}
-            <ToastContainer/>
-
-            {/*  Showing options to client*/}
             <Disclosure as="nav" className="bg-[#057e7e]">
                 {({open}) => (
                     <>
@@ -67,14 +63,6 @@ const Dashboard = () => {
                                 </div>
                                 <div
                                     className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                                    <button
-                                        type="button"
-                                        className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                                    >
-                                        <span className="absolute -inset-1.5"/>
-                                        <span className="sr-only">View notifications</span>
-                                        <BellIcon className="h-6 w-6" aria-hidden="true"/>
-                                    </button>
 
                                     {/* Profile dropdown */}
                                     <Menu as="div" className="relative ml-3">
@@ -85,7 +73,7 @@ const Dashboard = () => {
                                                 <span className="sr-only">Open user menu</span>
                                                 <img
                                                     className="h-8 w-8 rounded-full"
-                                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                                    src="https://media.licdn.com/dms/image/C4E03AQHmBtcT3igD3Q/profile-displayphoto-shrink_800_800/0/1522255956994?e=1715817600&v=beta&t=cXxqlMAWFUJnkU-NrUxwjxV7DxCkKUJ4-JnvtPWMPdE"
                                                     alt=""
                                                 />
                                             </Menu.Button>
@@ -124,7 +112,7 @@ const Dashboard = () => {
                                                 <Menu.Item>
                                                     {({active}) => (
                                                         <button
-                                                            href="#"
+                                                            onClick={logout}
                                                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                                                         >
                                                             Sign out
@@ -160,7 +148,5 @@ const Dashboard = () => {
                 )}
             </Disclosure>
         </>
-    );
-};
-
-export default Dashboard;
+    )
+}

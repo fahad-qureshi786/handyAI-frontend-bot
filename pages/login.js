@@ -22,6 +22,9 @@ const Login = () => {
     function handleClick(event) {
         if (userData.email===process.env.ADMIN_EMAIL || userData.password===process.env.ADMIN_PASSWORD) {
             event.preventDefault();
+            sessionStorage.setItem("login", JSON.stringify({
+                username: 'admin@handyAI.com'
+            }))
             router.push("/dashboard");
             toast.success('Login Successfully !', {
                 position: toast.POSITION.TOP_RIGHT
