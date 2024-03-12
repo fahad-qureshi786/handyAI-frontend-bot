@@ -13,7 +13,10 @@ const Dashboard = () => {
 
             {/*  Showing options to client*/}
             <DashboardHeader dashboard={true} chats={false} settings={false} />
-            <SystemPrompt />
+
+            <div className="h-full justify-center flex">
+                <img src="/in-progress.png" alt="In Progress"/>
+            </div>
         </>
     );
 };
