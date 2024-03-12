@@ -51,13 +51,11 @@ const Login = () => {
                                 className="absolute bg-gradient-to-b from-indigo-600 to-blue-500 opacity-75 inset-0 z-0"/>
                             <div className="w-full  max-w-md z-10">
                                 <div className="sm:text-4xl xl:text-5xl font-bold leading-tight mb-6">
-                                    Welcome to Dice Food
+                                    Welcome to HandyAI Bot
                                 </div>
                                 <div className="sm:text-sm xl:text-md text-gray-200 font-normal">
                                     {" "}
-                                    Experience the future of food ordering with our SaaS-based food company's AI
-                                    chatbot. Say goodbye to long waits and hello to instant, personalized
-                                    recommendations for a delightful dining experience!
+
                                 </div>
                             </div>
                             {/*-remove custom style*/}
