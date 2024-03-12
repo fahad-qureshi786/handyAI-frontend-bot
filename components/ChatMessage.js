@@ -31,7 +31,7 @@ export const ChatMessage = ({index, senderMessage, botReply,dateTimeStamp}) => {
                         </p>
 
             </div>
-            <div style={{backgroundColor: '#099696', color: 'white'}} dangerouslySetInnerHTML={{__html: botReply}} key={index} className="chat-message px-4 py-2 rounded self-start">
+            <div style={{backgroundColor: '#099696', color: 'white'}} dangerouslySetInnerHTML={{__html: botReply}} key={index} className="chat-message text-white px-4 py-2 rounded self-start">
             </div>
 
         </>

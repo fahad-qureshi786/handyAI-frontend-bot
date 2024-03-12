@@ -46,7 +46,7 @@ export default function SessionChat(){
     }, [])
     useEffect(()=> {
         getSessionMessages()
-    }, [messages])
+    }, [sessionId])
     return (
         <>
             <DashboardHeader dashboard={false} chats={true} settings={false} />
