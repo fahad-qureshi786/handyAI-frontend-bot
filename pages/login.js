@@ -20,7 +20,7 @@ const Login = () => {
     const router = useRouter();
 
     function handleClick(event) {
-        if (userData.email==="admin@gmail.com" || userData.password==="admin") {
+        if (userData.email===process.env.ADMIN_EMAIL || userData.password===process.env.ADMIN_PASSWORD) {
             event.preventDefault();
             router.push("/dashboard");
             toast.success('Login Successfully !', {
@@ -41,21 +41,19 @@ const Login = () => {
                     <div
                         className="flex flex-col sm:flex-row items-center md:items-start sm:justify-center md:justify-start flex-auto min-w-0 bg-white">
                         <div
-                            className="sm:w-1/2 xl:w-3/5 h-full hidden md:flex flex-auto items-center justify-center p-10 overflow-hidden bg-purple-900 text-white bg-no-repeat bg-cover relative"
+                            className="sm:w-1/2 xl:w-full h-full hidden md:flex flex-auto items-center justify-center p-10 overflow-hidden bg-purple-900 text-white bg-no-repeat bg-cover relative"
                             style={{
-                                backgroundImage:
-                                    "url(https://images.unsplash.com/photo-1579451861283-a2239070aaa9?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80)"
+                                backgroundColor: '#057e7e'
                             }}
                         >
                             <div
-                                className="absolute bg-gradient-to-b from-indigo-600 to-blue-500 opacity-75 inset-0 z-0"/>
-                            <div className="w-full  max-w-md z-10">
+                                className="absolute opacity-75 inset-0 z-0"/>
+                            <div className="w-full  max-w-lg z-10">
                                 <div className="sm:text-4xl xl:text-5xl font-bold leading-tight mb-6">
-                                    Welcome to HandyAI Bot
+                                    Welcome to HandyAI
                                 </div>
                                 <div className="sm:text-sm xl:text-md text-gray-200 font-normal">
-                                    {" "}
-
+                                    {"At The Upkeep Club, we understand the importance of maintaining a well-kept home. That's why we offer a wide range of services, from basic repairs to full-scale renovations, all tailored to meet your specific requirements. Whether you need plumbing fixed, electrical work, painting, carpentry, or even complex installations, our expert handymen are equipped with the skills and tools to get the job done right."}
                                 </div>
                             </div>
                             {/*-remove custom style*/}
@@ -148,16 +146,11 @@ const Login = () => {
                                                 Remember me
                                             </label>
                                         </div>
-                                        <div className="text-sm">
-                                            <a href="#" className="text-indigo-400 hover:text-blue-500">
-                                                Forgot your password?
-                                            </a>
-                                        </div>
                                     </div>
                                     <div>
                                         <button
                                             type="submit"
-                                            className="w-full text-white flex justify-center bg-[#3a80d4] hover:text-black mt-8 py-4 rounded-xl text-black hover:bg-amber-600 hover:shadow-xl transition ease-in duration-300"
+                                            className="w-full text-white flex justify-center bg-[#057e7e] hover:text-black mt-8 py-4 rounded-xl text-black hover:bg-amber-600 hover:shadow-xl transition ease-in duration-300"
                                             onClick={handleClick}
                                         >
                                             Sign in
