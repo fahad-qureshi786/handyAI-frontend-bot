@@ -9,7 +9,8 @@ import {AiOutlineLogin} from "react-icons/ai";
 import {APIs} from "../const/APIs";
 
 export default function Home() {
-    const [messages, setMessages] = useState( []);
+    const [messages, setMessages] = useState([]);
+    const [sendTrigger, setSendTrigger] = useState(false);
     const [isLoading, setIsLoading] = useState(false); // New state for loading indicator
     const [inputText, setInputText] = useState({
         prompt: '',
@@ -21,12 +22,10 @@ export default function Home() {
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
     const [isOpen, setIsOpen] = useState(false);
-    const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [stream, setStream] = useState(null);
 
     useEffect(() => {
-        // Cleanup function to stop the camera stream
         return () => {
             if (stream) {
                 let tracks = stream.getTracks();
@@ -35,35 +34,11 @@ export default function Home() {
         };
     }, [stream]);
 
-    const getCameraPermission = async () => {
-        try {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({video: true});
-            setStream(mediaStream);
-            if (videoRef.current) {
-                videoRef.current.srcObject = mediaStream;
-            }
-        } catch (err) {
-            console.error('Error accessing the camera:', err);
-        }
-    };
 
-    const capturePhoto = () => {
-        if (canvasRef.current && videoRef.current) {
-            const context = canvasRef.current.getContext('2d');
-            const {videoWidth, videoHeight} = videoRef.current;
-            // Set canvas size to match video
-            canvasRef.current.width = videoWidth;
-            canvasRef.current.height = videoHeight;
-            // Draw the video frame to the canvas
-            context.drawImage(videoRef.current, 0, 0, videoWidth, videoHeight);
-            // You can now use the canvas to display or save the image
-            // For example, to get the image data as a URL:
-            // const imageDataUrl = canvasRef.current.toDataURL('image/png');
-        }
-    };
     const handleClick = event => {
         hiddenFileInput.current.click();
     };
+
     const handleChange = event => {
         const fileUploaded = event.target.files[0];
         if (fileUploaded) {
@@ -94,47 +69,27 @@ export default function Home() {
 
 
     const createNewSession = async () => {
-        if(!sessionStorage.getItem("session")){
+        if (!sessionStorage.getItem("session")) {
             await axios.get(APIs.USERS.GENERATE_SESSION).then(res => {
                 sessionStorage.setItem("session", JSON.stringify(res.data.response));
             }).catch(err => {
                 console.log("Error session creation")
             })
-
-            await axios.post(APIs.USERS.ASK_QUERY, {
-                sessionId: JSON.parse(sessionStorage.getItem("session")),
-                userRequest: "Please introduce to my new user as you are a handy man from theupkeepclub how can you assist them!"
-            }).then(response => {
-                    adjustTextareaHeight();
-                    const botResponseHtml = response.data.response.modelResponse;
-                    const formattedBotResponse = {
-                        text: botResponseHtml,
-                        sender: 'bot',
-                    };
-                    setMessages([...messages, "", formattedBotResponse]);
-                    setIsLoading(false);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }else if(sessionStorage.getItem("chatHistory")){
+        } else if (sessionStorage.getItem("chatHistory")) {
             setMessages(JSON.parse(sessionStorage.getItem("chatHistory")))
         }
     }
-
 
     useEffect(() => {
         createNewSession()
     }, []);
 
     useEffect(() => {
-        // Adjust the textarea height initially
         adjustTextareaHeight();
-        // Scroll to the bottom of the chat messages when they change
         messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
     }, [messages]);
     useEffect(() => {
-        if(messages.length>0){
+        if (messages.length > 0) {
             sessionStorage.setItem("chatHistory", JSON.stringify(messages));
         }
     }, [messages]);
@@ -150,7 +105,6 @@ export default function Home() {
         setMessages([...messages, userMessage]);
         setInputText({prompt: ''}); // Clear the input text
         setIsLoading(true);
-        // Send the user message to the AP
         let formData = new FormData()
         formData.append("sessionId", JSON.parse(sessionStorage.getItem("session")))
         formData.append("userRequest", inputText.prompt)
@@ -170,6 +124,7 @@ export default function Home() {
                 setIsLoading(false);
             })
             .catch(error => {
+                setIsLoading(false);
                 console.error(error);
             });
     };
@@ -188,7 +143,6 @@ export default function Home() {
         adjustTextareaHeight();
     };
 
-    // Function to adjust the textarea height based on its content
     const adjustTextareaHeight = () => {
         if (textareaRef.current) {
             textareaRef.current.style.height = 'auto'; // Reset height to auto
@@ -198,9 +152,9 @@ export default function Home() {
 
 
     const handleClearChat = () => {
-        setMessages([]); // Clear the messages array
-        sessionStorage.setItem("chatHistory", JSON.stringify([])); // Clear the messages array
-        setChatCleared(true); // Set the chat clearing state to true
+        setMessages([]);
+        sessionStorage.setItem("chatHistory", JSON.stringify([]));
+        setChatCleared(true);
     };
 
     const toggleDropdown = () => {
@@ -208,33 +162,69 @@ export default function Home() {
     };
 
 
+    async function handleSendMessageViaShortcut(howDoIUseAStudFinder) {
+        const userMessage = {text: howDoIUseAStudFinder, sender: 'user'};
+        messages.push(userMessage)
+        setIsLoading(true);
+        let formData = new FormData()
+        formData.append("sessionId", JSON.parse(sessionStorage.getItem("session")))
+        formData.append("userRequest", howDoIUseAStudFinder)
+        await axios.post(APIs.USERS.ASK_QUERY, {
+            sessionId: JSON.parse(sessionStorage.getItem("session")),
+            userRequest: howDoIUseAStudFinder
+        }).then(response => {
+                adjustTextareaHeight();
+                const botResponseHtml = response.data.response.modelResponse;
+                const formattedBotResponse = {
+                    text: botResponseHtml,
+                    sender: 'bot',
+                };
+                setMessages([...messages, formattedBotResponse]);
+                setIsLoading(false);
+            })
+            .catch(error => {
+                setIsLoading(false);
+                console.error(error);
+            });
+    }
+
     return (
         <>
             <Head>
                 <title> HandyAI</title>
-                <link rel="icon" href="/favicon.ico" />
+                <link rel="icon" href="/favicon.ico"/>
             </Head>
             <div className="flex flex-col h-screen relative">
                 <div style={{backgroundColor: '#EEEEEE', height: '4rem'}}>
-                    <div style={{marginTop: '0.2rem'}} className="fixed bg top-8 md:top-2 right-2 z-10">
+                    <div style={{marginTop: '0.2rem'}} className="fixed bg xl:top-2 lg:top-2 md:top-2 right-2 z-10">
                         <button
                             className="text-red-600 hover:text-red-800 transition duration-300"
                             onClick={handleClearChat}
                         >
-                            <svg width="40" height="42" viewBox="0 0 40 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9.77664 33.4618C13.1558 36.8174 16.3308 37.1875 16.3308 37.1875C18.9791 34.7034 20.4225 32.4844 22.0325 27.7314C22.0325 27.7314 15.7425 21.3255 14.4566 19.3095C14.4566 19.3095 11.5325 20.8845 9.2708 21.1015C7.56664 21.2651 4.65747 20.349 4.65747 20.349C4.6808 22.9023 6.3433 30.051 9.77664 33.4618Z" stroke="#808080" strokeWidth="2.08333" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M14.4568 19.3095C16.0426 18.368 18.9426 16.1997 20.2851 17.4282C21.3375 18.3293 22.3075 19.3314 23.1826 20.4216C24.0985 21.6764 22.8343 24.864 22.0326 27.7314" stroke="#808080" stroke-width="2.08333" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M21.7126 18.767C24.5184 16.1245 35.3426 4.8125 35.3426 4.8125M5.8584 26.3427C9.38923 26.6201 11.7167 25.8072 11.7167 25.8072M9.0984 32.7136C14.2567 31.955 16.0426 29.2399 16.0426 29.2399" stroke="#808080" strokeWidth="2.08333" strokeLinecap="round" strokeLinejoin="round"/>
+                            <svg width="40" height="42" viewBox="0 0 40 42" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M9.77664 33.4618C13.1558 36.8174 16.3308 37.1875 16.3308 37.1875C18.9791 34.7034 20.4225 32.4844 22.0325 27.7314C22.0325 27.7314 15.7425 21.3255 14.4566 19.3095C14.4566 19.3095 11.5325 20.8845 9.2708 21.1015C7.56664 21.2651 4.65747 20.349 4.65747 20.349C4.6808 22.9023 6.3433 30.051 9.77664 33.4618Z"
+                                    stroke="#808080" strokeWidth="2.08333" strokeLinecap="round"
+                                    strokeLinejoin="round"/>
+                                <path
+                                    d="M14.4568 19.3095C16.0426 18.368 18.9426 16.1997 20.2851 17.4282C21.3375 18.3293 22.3075 19.3314 23.1826 20.4216C24.0985 21.6764 22.8343 24.864 22.0326 27.7314"
+                                    stroke="#808080" strokeWidth="2.08333" strokeLinecap="round"
+                                    strokeLinejoin="round"/>
+                                <path
+                                    d="M21.7126 18.767C24.5184 16.1245 35.3426 4.8125 35.3426 4.8125M5.8584 26.3427C9.38923 26.6201 11.7167 25.8072 11.7167 25.8072M9.0984 32.7136C14.2567 31.955 16.0426 29.2399 16.0426 29.2399"
+                                    stroke="#808080" strokeWidth="2.08333" strokeLinecap="round"
+                                    strokeLinejoin="round"/>
                             </svg>
                         </button>
                     </div>
                     <div className="text-center mt-5">
-                        <h3 className={"text-lg"}><b>Your Personal AI Handyman, Ready to Assist</b></h3>
+                        <h3 className={"text-lg text-[#057e7e]"}><b>Personal AI Handyman</b></h3>
                     </div>
-                    <div className="fixed top-2 ms-2 cursor-pointer left-2 z-10">
+                    <div className="fixed hide-mobile top-2 ms-2 cursor-pointer left-2 z-10">
                         <div className="relative">
                             <div className="cursor-pointer" onClick={toggleDropdown}>
-                                <img src="/img.png"/>
+                                <img src="/img.png" alt={"cursor"}/>
                             </div>
                             {isOpen && (
                                 <div
@@ -325,12 +315,12 @@ export default function Home() {
                             >
                                 {message.sender === 'bot' ? (
                                     <div style={{backgroundColor: '#007C7C', opacity: '70%', color: 'white'}}
-                                        dangerouslySetInnerHTML={{__html: message.text}}
-                                        className={`px-4 py-2 rounded-lg inline-block text-gray-900 md:max-w-[52rem]`}
+                                         dangerouslySetInnerHTML={{__html: message.text}}
+                                         className={`px-4 py-2 rounded-lg inline-block text-gray-900 md:max-w-[52rem]`}
                                     />
                                 ) : (
                                     <span style={{backgroundColor: '#EEEEEE', color: 'black'}}
-                                        className={`px-4 py-2 rounded-lg inline-block my-4 w-full md:max-w-[52rem]`}>
+                                          className={`px-4 py-2 rounded-lg inline-block my-4 w-full md:max-w-[52rem]`}>
                                     {message.text}
                                 </span>
                                 )}
@@ -339,6 +329,79 @@ export default function Home() {
                     )}
                     <div ref={messagesEndRef}/>
                 </div>
+
+                {
+                    messages.length === 0 && <>
+                        <div className="flex justify-center mb-3 mt-2">
+                            <div className="row lg:flex md:flex-row sm:flex-row">
+                                <div onClick={()=> {
+                                    handleSendMessageViaShortcut("Who am I?")
+                                }} style={{width: '430px', fontSize: '17px'}}
+                                     className="w-500  ms-2 bg-[#E0E0E0] rounded-[10px] mb-3 overflow-hidden">
+                                    <div className="px-6 py-4">
+                                        <div className="justify-between cursor-pointer flex">
+                                            <div className="font-bold mb-2 my-auto cursor-pointer">Who am I?</div>
+                                            <div>
+                                                <img className={"cursor-pointer"} src="/up.png" alt=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{width: '430px', fontSize: '17px'}}
+                                     className="w-500  ms-2 bg-[#E0E0E0] rounded-[10px] mb-3 overflow-hidden">
+                                    <div className="px-6 py-4">
+                                        <div onClick={()=> {
+                                            handleSendMessageViaShortcut("How do I use a stud finder?")
+                                        }}
+                                             className="justify-between cursor-pointer flex">
+                                            <div className="font-bold mb-2 my-auto cursor-pointer">How do I use a stud
+                                                finder?
+                                            </div>
+                                            <div>
+                                                <img className={"cursor-pointer"} src="/up.png" alt=""/>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex justify-center mb-3 mt-2">
+                            <div className="row lg:flex md:flex-row sm:flex-row">
+                                <div style={{width: '430px', fontSize: '17px'}}
+                                     className="w-500  ms-2 bg-[#E0E0E0] rounded-[10px] mb-3 overflow-hidden">
+                                    <div className="px-6 py-4">
+                                        <div onClick={()=> {
+                                            handleSendMessageViaShortcut("What type of paint should I use for room?")
+                                        }}
+                                             className="justify-between cursor-pointer flex">
+                                            <div className="font-bold mb-2 my-auto cursor-pointer">What type of paint should I use for?
+                                            </div>
+                                            <div>
+                                                <img className={"cursor-pointer"} src="/up.png" alt=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{width: '430px', fontSize: '17px'}}
+                                     className="w-500  ms-2 bg-[#E0E0E0] rounded-[10px] mb-3 overflow-hidden">
+                                    <div className="px-6 py-4">
+                                        <div onClick={()=> {
+                                            handleSendMessageViaShortcut("Why is my refrigerator not cooling?")
+                                        }}
+                                             className="justify-between cursor-pointer flex">
+                                            <div className="font-bold mb-2 my-auto cursor-pointer">Why is my refrigerator not cooling?
+                                            </div>
+                                            <div>
+                                                <img className={"cursor-pointer"} src="/up.png" alt=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                }
 
                 <div className="border-t-2 fixed border-gray-200 mb-4 px-4 pt-4 sm:pt-2 relative">
                     <div className="relative shadow-inner drop-shadow-sm  shadow-lg  flex my-4">
@@ -352,7 +415,7 @@ export default function Home() {
                         onKeyPress={handleKeyPress}
                     />
                         {/*left button*/}
-                        <div className="absolute bottom-1 left-2  pb-2.5 pe-3">
+                        <div className="absolute my-3 left-2  pb-2.5 pe-3">
                             {/*right button*/}
                             <span data-modal-target="popup-modal" data-modal-toggle="popup-modal">
                                 <span onClick={() => setShowModal(false)}>

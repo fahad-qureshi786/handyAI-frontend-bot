@@ -5,3 +5,9 @@
     @apply cursor-wait;
     /* Add styles to indicate loading, e.g., changing background color or adding a spinner */
 }
+
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
