@@ -336,25 +336,25 @@ export default function Home() {
                             <div className="row lg:flex md:flex-row sm:flex-row">
                                 <div onClick={()=> {
                                     handleSendMessageViaShortcut("Who am I?")
-                                }} style={{width: '430px', fontSize: '17px'}}
+                                }} style={{width: '430px', fontSize: '18px'}}
                                      className="w-500  ms-2 bg-[#E0E0E0] rounded-[10px] mb-3 overflow-hidden">
                                     <div className="px-6 py-4">
                                         <div className="justify-between cursor-pointer flex">
-                                            <div className="font-bold mb-2 my-auto cursor-pointer">Who am I?</div>
+                                            <div className="font-bold text-[#808080] mb-2 my-auto cursor-pointer">Who am I?</div>
                                             <div>
                                                 <img className={"cursor-pointer"} src="/up.png" alt=""/>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div style={{width: '430px', fontSize: '17px'}}
+                                <div style={{width: '430px', fontSize: '18px'}}
                                      className="w-500  ms-2 bg-[#E0E0E0] rounded-[10px] mb-3 overflow-hidden">
                                     <div className="px-6 py-4">
                                         <div onClick={()=> {
                                             handleSendMessageViaShortcut("How do I use a stud finder?")
                                         }}
                                              className="justify-between cursor-pointer flex">
-                                            <div className="font-bold mb-2 my-auto cursor-pointer">How do I use a stud
+                                            <div className="font-bold mb-2 text-[#808080] my-auto cursor-pointer">How do I use a stud
                                                 finder?
                                             </div>
                                             <div>
@@ -368,14 +368,14 @@ export default function Home() {
                         </div>
                         <div className="flex justify-center mb-3 mt-2">
                             <div className="row lg:flex md:flex-row sm:flex-row">
-                                <div style={{width: '430px', fontSize: '17px'}}
+                                <div style={{width: '430px', fontSize: '18px'}}
                                      className="w-500  ms-2 bg-[#E0E0E0] rounded-[10px] mb-3 overflow-hidden">
                                     <div className="px-6 py-4">
                                         <div onClick={()=> {
                                             handleSendMessageViaShortcut("What type of paint should I use for room?")
                                         }}
                                              className="justify-between cursor-pointer flex">
-                                            <div className="font-bold mb-2 my-auto cursor-pointer">What type of paint should I use for?
+                                            <div className="font-bold mb-2  text-[#808080] my-auto cursor-pointer">What type of paint should I use for?
                                             </div>
                                             <div>
                                                 <img className={"cursor-pointer"} src="/up.png" alt=""/>
@@ -383,14 +383,14 @@ export default function Home() {
                                         </div>
                                     </div>
                                 </div>
-                                <div style={{width: '430px', fontSize: '17px'}}
+                                <div style={{width: '430px', fontSize: '18px'}}
                                      className="w-500  ms-2 bg-[#E0E0E0] rounded-[10px] mb-3 overflow-hidden">
                                     <div className="px-6 py-4">
                                         <div onClick={()=> {
                                             handleSendMessageViaShortcut("Why is my refrigerator not cooling?")
                                         }}
                                              className="justify-between cursor-pointer flex">
-                                            <div className="font-bold mb-2 my-auto cursor-pointer">Why is my refrigerator not cooling?
+                                            <div className="font-bold mb-2  text-[#808080] my-auto cursor-pointer">Why is my refrigerator not cooling?
                                             </div>
                                             <div>
                                                 <img className={"cursor-pointer"} src="/up.png" alt=""/>
