@@ -24,7 +24,7 @@ export default function Home() {
     const [isOpen, setIsOpen] = useState(false);
     const canvasRef = useRef(null);
     const [stream, setStream] = useState(null);
-    const [regenerate, setRegenerate] = useState(false);
+    const [regenerate, setRegenerate] = useState(true);
 
     useEffect(() => {
         return () => {
@@ -452,9 +452,9 @@ export default function Home() {
                 }
                 {
                     regenerate && <div className="flex justify-center">
-                        <button onClick={regenerateResponse} style={{height: '70px', width: '200px'}}
-                                className="bg-[#057e7e] w-50 text-white font-bold py-2 px-4 rounded">
-                            Regenerate...
+                        <button onClick={regenerateResponse} style={{height: '70px', width: '250px'}}
+                                className="bg-[#057e7e] w-[100px] text-white font-bold py-2 px-4 rounded">
+                            Ooops😳.. Click to try again
                         </button>
                     </div>
                 }
