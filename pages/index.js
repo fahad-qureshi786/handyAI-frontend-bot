@@ -24,6 +24,7 @@ export default function Home() {
     const [isOpen, setIsOpen] = useState(false);
     const canvasRef = useRef(null);
     const [stream, setStream] = useState(null);
+    const [regenerate, setRegenerate] = useState(false);
 
     useEffect(() => {
         return () => {
@@ -112,22 +113,23 @@ export default function Home() {
         await axios.post(APIs.USERS.ASK_QUERY, {
             sessionId: JSON.parse(sessionStorage.getItem("session")),
             userRequest: inputText.prompt
-        })
-            .then(response => {
-                adjustTextareaHeight();
-                let botResponseHtml = response.data.response.data.modelResponse;
-                botResponseHtml = botResponseHtml.replace(/undefined$/, '');
-                const formattedBotResponse = {
-                    text: botResponseHtml,
-                    sender: 'bot',
-                };
-                setMessages([...messages, userMessage, formattedBotResponse]);
-                setIsLoading(false);
-            })
-            .catch(error => {
-                setIsLoading(false);
-                console.error(error);
-            });
+        }).then(response => {
+            adjustTextareaHeight();
+            let botResponseHtml = response.data.response.data.modelResponse;
+            botResponseHtml = botResponseHtml.replace(/undefined$/, '');
+            if (!botResponseHtml) {
+                setRegenerate(true)
+            }
+            const formattedBotResponse = {
+                text: botResponseHtml,
+                sender: 'bot',
+            };
+            setMessages([...messages, userMessage, formattedBotResponse]);
+            setIsLoading(false);
+        }).catch(error => {
+            setIsLoading(false);
+            console.error(error);
+        });
     };
     const isSendButtonDisabled = inputText.prompt.trim() === '';
 
@@ -174,15 +176,49 @@ export default function Home() {
             sessionId: JSON.parse(sessionStorage.getItem("session")),
             userRequest: howDoIUseAStudFinder
         }).then(response => {
-                adjustTextareaHeight();
-                const botResponseHtml = response.data.response.modelResponse;
-                const formattedBotResponse = {
-                    text: botResponseHtml,
-                    sender: 'bot',
-                };
-                setMessages([...messages, formattedBotResponse]);
+            adjustTextareaHeight();
+            let botResponseHtml = response.data.response.data.modelResponse;
+            botResponseHtml = botResponseHtml.replace(/undefined$/, '');
+            if (!botResponseHtml) {
+                setRegenerate(true)
+            }
+            const formattedBotResponse = {
+                text: botResponseHtml,
+                sender: 'bot',
+            };
+            setMessages([...messages, formattedBotResponse]);
+            setIsLoading(false);
+        })
+            .catch(error => {
                 setIsLoading(false);
-            })
+                console.error(error);
+            });
+    }
+
+    async function regenerateResponse() {
+        const userMessage = {text: "Please regenerate recent response", sender: 'user'};
+        messages.push(userMessage)
+        setIsLoading(true);
+        let formData = new FormData()
+        formData.append("sessionId", JSON.parse(sessionStorage.getItem("session")))
+        formData.append("userRequest", "Please regenerate recent response")
+        await axios.post(APIs.USERS.ASK_QUERY, {
+            sessionId: JSON.parse(sessionStorage.getItem("session")),
+            userRequest: "Please regenerate recent response"
+        }).then(response => {
+            adjustTextareaHeight();
+            let botResponseHtml = response.data.response.data.modelResponse;
+            botResponseHtml = botResponseHtml.replace(/undefined$/, '');
+            if (!botResponseHtml) {
+                setRegenerate(true)
+            }
+            const formattedBotResponse = {
+                text: botResponseHtml,
+                sender: 'bot',
+            };
+            setMessages([...messages, formattedBotResponse]);
+            setIsLoading(false);
+        })
             .catch(error => {
                 setIsLoading(false);
                 console.error(error);
@@ -335,13 +371,15 @@ export default function Home() {
                     messages.length === 0 && <>
                         <div className="flex justify-center mb-3 mt-2">
                             <div className="row lg:flex md:flex-row sm:flex-row">
-                                <div onClick={()=> {
+                                <div onClick={() => {
                                     handleSendMessageViaShortcut("Who am I?")
                                 }} style={{width: '430px', fontSize: '18px'}}
                                      className="w-500  ms-2 bg-[#E0E0E0] rounded-[10px] mb-3 overflow-hidden">
                                     <div className="px-6 py-4">
                                         <div className="justify-between cursor-pointer flex">
-                                            <div className="font-bold text-[#808080] mb-2 my-auto cursor-pointer">Who am I?</div>
+                                            <div className="font-bold text-[#808080] mb-2 my-auto cursor-pointer">Who am
+                                                I?
+                                            </div>
                                             <div>
                                                 <img className={"cursor-pointer"} src="/up.png" alt=""/>
                                             </div>
@@ -351,11 +389,12 @@ export default function Home() {
                                 <div style={{width: '430px', fontSize: '18px'}}
                                      className="w-500  ms-2 bg-[#E0E0E0] rounded-[10px] mb-3 overflow-hidden">
                                     <div className="px-6 py-4">
-                                        <div onClick={()=> {
+                                        <div onClick={() => {
                                             handleSendMessageViaShortcut("How do I use a stud finder?")
                                         }}
                                              className="justify-between cursor-pointer flex">
-                                            <div className="font-bold mb-2 text-[#808080] my-auto cursor-pointer">How do I use a stud
+                                            <div className="font-bold mb-2 text-[#808080] my-auto cursor-pointer">How do I
+                                                use a stud
                                                 finder?
                                             </div>
                                             <div>
@@ -372,11 +411,12 @@ export default function Home() {
                                 <div style={{width: '430px', fontSize: '18px'}}
                                      className="w-500  ms-2 bg-[#E0E0E0] rounded-[10px] mb-3 overflow-hidden">
                                     <div className="px-6 py-4">
-                                        <div onClick={()=> {
+                                        <div onClick={() => {
                                             handleSendMessageViaShortcut("What type of paint should I use for room?")
                                         }}
                                              className="justify-between cursor-pointer flex">
-                                            <div className="font-bold mb-2  text-[#808080] my-auto cursor-pointer">What type of paint should I use for?
+                                            <div className="font-bold mb-2  text-[#808080] my-auto cursor-pointer">What type
+                                                of paint should I use for?
                                             </div>
                                             <div>
                                                 <img className={"cursor-pointer"} src="/up.png" alt=""/>
@@ -387,11 +427,12 @@ export default function Home() {
                                 <div style={{width: '430px', fontSize: '18px'}}
                                      className="w-500  ms-2 bg-[#E0E0E0] rounded-[10px] mb-3 overflow-hidden">
                                     <div className="px-6 py-4">
-                                        <div onClick={()=> {
+                                        <div onClick={() => {
                                             handleSendMessageViaShortcut("Why is my refrigerator not cooling?")
                                         }}
                                              className="justify-between cursor-pointer flex">
-                                            <div className="font-bold mb-2  text-[#808080] my-auto cursor-pointer">Why is my refrigerator not cooling?
+                                            <div className="font-bold mb-2  text-[#808080] my-auto cursor-pointer">Why is my
+                                                refrigerator not cooling?
                                             </div>
                                             <div>
                                                 <img className={"cursor-pointer"} src="/up.png" alt=""/>
@@ -402,6 +443,14 @@ export default function Home() {
                             </div>
                         </div>
                     </>
+                }
+                {
+                    regenerate && <div className="flex justify-center">
+                        <button onClick={regenerateResponse} style={{height: '70px', width: '200px'}}
+                                className="bg-[#057e7e] w-50 text-white font-bold py-2 px-4 rounded">
+                            Regenerate...
+                        </button>
+                    </div>
                 }
 
                 <div className="border-t-2 fixed border-gray-200 mb-4 px-4 pt-4 sm:pt-2 relative">
