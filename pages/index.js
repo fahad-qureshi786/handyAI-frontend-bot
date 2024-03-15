@@ -115,7 +115,8 @@ export default function Home() {
         })
             .then(response => {
                 adjustTextareaHeight();
-                const botResponseHtml = response.data.response.modelResponse;
+                let botResponseHtml = response.data.response.data.modelResponse;
+                botResponseHtml = botResponseHtml.replace(/undefined$/, '');
                 const formattedBotResponse = {
                     text: botResponseHtml,
                     sender: 'bot',

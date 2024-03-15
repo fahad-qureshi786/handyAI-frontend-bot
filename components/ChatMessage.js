@@ -1,10 +1,14 @@
+import {useEffect} from "react";
+
 export const ChatMessage = ({index, senderMessage, botReply,dateTimeStamp}) => {
+    useEffect(() =>{
+        console.log(botReply)
+    }, [])
     const formatDateTime = (dateTimeStamp) => {
         const date = new Date(dateTimeStamp);
-        if (isNaN(date.getTime())) { // Checks if the date is invalid
-            return 'Invalid Date'; // Return a placeholder or handle as needed
+        if (isNaN(date.getTime())) {
+            return 'Invalid Date';
         }
-
         const options = {
             year: 'numeric',
             month: 'long',
