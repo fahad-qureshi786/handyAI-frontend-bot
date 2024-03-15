@@ -125,8 +125,10 @@ export default function Home() {
                 sender: 'bot',
             };
             setMessages([...messages, userMessage, formattedBotResponse]);
+            setRegenerate(false)
             setIsLoading(false);
         }).catch(error => {
+            setRegenerate(true)
             setIsLoading(false);
             console.error(error);
         });
@@ -188,8 +190,10 @@ export default function Home() {
             };
             setMessages([...messages, formattedBotResponse]);
             setIsLoading(false);
+            setRegenerate(false)
         })
             .catch(error => {
+                setRegenerate(true)
                 setIsLoading(false);
                 console.error(error);
             });
@@ -217,9 +221,11 @@ export default function Home() {
                 sender: 'bot',
             };
             setMessages([...messages, formattedBotResponse]);
+            setRegenerate(false)
             setIsLoading(false);
         })
             .catch(error => {
+                setRegenerate(true)
                 setIsLoading(false);
                 console.error(error);
             });
