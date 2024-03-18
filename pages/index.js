@@ -24,7 +24,7 @@ export default function Home() {
     const [isOpen, setIsOpen] = useState(false);
     const canvasRef = useRef(null);
     const [stream, setStream] = useState(null);
-    const [regenerate, setRegenerate] = useState(true);
+    const [regenerate, setRegenerate] = useState(false);
 
     useEffect(() => {
         return () => {
